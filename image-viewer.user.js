@@ -6,13 +6,15 @@
 // @description  skip the hassle
 // @author       porn-lover
 // @match        https://fastpic.org/view/*
+// @match        https://pixhost.to/show/*
 // ==/UserScript==
 
 (function() {
     'use strict';
 
     var urls = {
-        'fastpic.org': {element: '.img-a img', attr: 'src'}
+        'fastpic.org': {element: '.img-a img', attr: 'src'},
+        'pixhost.to': {element: 'img#image', attr: 'src'},
     };
 
     const intervalTime = 100; // 100 milliseconden
