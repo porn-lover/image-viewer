@@ -2,14 +2,14 @@
 // @name         Image viewer
 // @require      https://code.jquery.com/jquery-3.7.1.min.js
 // @namespace    http://tampermonkey.net/
-// @version      2025-06-04
+// @version      2025-06-04b
 // @description  skip the hassle
 // @author       porn-lover
-// @match        https://fastpic.org/view/*
-// @match        https://imgbox.com/*
-// @match        https://imagebam.com/view/*
-// @match        https://pixhost.to/show/*
-// @match        https://postimg.cc/*
+// @match        *://*.fastpic.org/view/*
+// @match        *://*.imgbox.com/*
+// @match        *://*.imagebam.com/view/*
+// @match        *://*.pixhost.to/show/*
+// @match        *://*.postimg.cc/*
 // ==/UserScript==
 
 (function() {
@@ -23,7 +23,7 @@
         'postimg.cc': {element: 'img#main-image', attr: 'src'},
     };
 
-    const intervalTime = 50; // 100 milliseconden
+    const intervalTime = 50; // 50 milliseconden
     const stopTime = 5000;    // 5 seconden
     const obj = urls[window.location.hostname];
 
