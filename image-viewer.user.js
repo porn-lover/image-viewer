@@ -2,7 +2,7 @@
 // @name         Image viewer
 // @require      https://code.jquery.com/jquery-3.7.1.min.js
 // @namespace    http://tampermonkey.net/
-// @version      2025-06-04b
+// @version      2025-06-04c
 // @description  skip the hassle
 // @author       porn-lover
 // @match        *://*.fastpic.org/view/*
@@ -25,8 +25,11 @@
 
     const intervalTime = 50; // 50 milliseconden
     const stopTime = 5000;    // 5 seconden
-    const obj = urls[window.location.hostname];
-
+    const obj = urls[window.location.hostname.replace(/^www\./, '')];
+    if (obj === undefined) {
+        return;
+    }
+    
     const myInterval = setInterval(() => {
         if($(obj.element).length) {
             window.location = $(obj.element).attr(obj.attr);
