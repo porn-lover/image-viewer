@@ -2,7 +2,7 @@
 // @name         Image viewer
 // @require      https://code.jquery.com/jquery-3.7.1.min.js
 // @namespace    http://tampermonkey.net/
-// @version      2025-06-04c
+// @version      2025-06-04d
 // @description  skip the hassle
 // @author       porn-lover
 // @match        *://*.fastpic.org/view/*
