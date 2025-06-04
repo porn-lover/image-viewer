@@ -2,7 +2,7 @@
 // @name         Image viewer
 // @require      https://code.jquery.com/jquery-3.7.1.min.js
 // @namespace    http://tampermonkey.net/
-// @version      2025-06-04e
+// @version      2025-06-04f
 // @description  skip the hassle
 // @author       porn-lover
 // @match        *://*.fastpic.org/view/*
@@ -36,7 +36,7 @@
         }
         
         if(obj.continue !== undefined && $(obj.continue.element).length) {
-            eval(obj.continue.element.action);
+            eval(obj.continue.action);
         }
     }, intervalTime);
 
