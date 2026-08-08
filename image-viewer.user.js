@@ -16,7 +16,7 @@
     'use strict';
 
     var urls = {
-        'fastpic.org': {element: '.img-a img', attr: 'src'},
+        'fastpic.org': {element: 'a.btn-outline-secondary', attr: 'src', url_regex: {from:['&dl=1'], to:['']}},
         'imagebam.com': {element: 'img.main-image', attr: 'src', continue: {element: '[data-shown="inter"]', action: "var date = new Date();date.setTime(date.getTime() + (6 * 60 * 60 * 1000));var expires = \"; expires=\" + date.toUTCString();document.cookie = \"nsfw_inter=1\" + expires + \"; path=/\";window.location.reload();"}},
         'imgbox.com': {element: 'img#img', attr: 'src'},
         'pixhost.to': {element: 'img#image', attr: 'src'},
@@ -32,7 +32,11 @@
     
     const myInterval = setInterval(() => {
         if($(obj.element).length) {
-            window.location = $(obj.element).attr(obj.attr);
+            let newLocation = $(obj.element).attr(obj.attr);
+            if(obj.url_regex) {
+                newLocation = newLocation.replace(obj.url_regex.from[0], obj.url_regex.to[0]);
+            }
+            window.location = newLocation;
         }
         
         if(obj.continue !== undefined && $(obj.continue.element).length) {
