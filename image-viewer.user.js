@@ -2,13 +2,14 @@
 // @name         Image viewer
 // @require      https://code.jquery.com/jquery-3.7.1.min.js
 // @namespace    http://tampermonkey.net/
-// @version      2026.08.08.1
+// @version      2026.08.08.2
 // @description  skip the hassle
 // @author       porn-lover
 // @match        *://*.fastpic.org/view/*
 // @match        *://*.imgbox.com/*
 // @match        *://*.imagebam.com/view/*
 // @match        *://*.pixhost.to/show/*
+// @match        *://*.pixhost.cc/show/*
 // @match        *://*.postimg.cc/*
 // @grant        GM_cookie
 // @updateURL    https://raw.githubusercontent.com/porn-lover/image-viewer/main/image-viewer.user.js
@@ -17,7 +18,14 @@
 
 (function() {
     'use strict';
-
+    const pixhost = { 
+            element: 'img#image', 
+            attr: 'src', 
+            continue: {
+                element: 'a.continue', 
+                action: ($elem) => { $elem[0].click(); }
+            }
+        };
     const urls = {
         'fastpic.org': { 
             element: 'a.btn-outline-secondary', 
@@ -46,7 +54,8 @@
             }
         },
         'imgbox.com':  { element: 'img#img', attr: 'src' },
-        'pixhost.to':  { element: 'img#image', attr: 'src' },
+        'pixhost.to':  pixhost,
+        'pixhost.cc':  pixhost,
         'postimg.cc':  { element: 'img#main-image', attr: 'src' },
     };
 
@@ -67,9 +76,12 @@
             }
         }
 
-        if (obj.continue && $(obj.continue.element).length) {
-            obj.continue.action();
-            return true;
+        if (obj.continue) {
+            const $continueElem = $(obj.continue.element);
+            if ($continueElem.length) {
+                obj.continue.action($continueElem);
+                return true;
+            }
         }
         return false;
     };
