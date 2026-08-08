@@ -2,7 +2,7 @@
 // @name         Image viewer
 // @require      https://code.jquery.com/jquery-3.7.1.min.js
 // @namespace    http://tampermonkey.net/
-// @version      2026-08-08b
+// @version      2026.08.08.1
 // @description  skip the hassle
 // @author       porn-lover
 // @match        *://*.fastpic.org/view/*
@@ -11,6 +11,8 @@
 // @match        *://*.pixhost.to/show/*
 // @match        *://*.postimg.cc/*
 // @grant        GM_cookie
+// @updateURL    https://raw.githubusercontent.com/porn-lover/image-viewer/main/image-viewer.user.js
+// @downloadURL  https://raw.githubusercontent.com/porn-lover/image-viewer/main/image-viewer.user.js
 // ==/UserScript==
 
 (function() {
