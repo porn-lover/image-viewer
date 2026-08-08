@@ -2,7 +2,7 @@
 // @name         Image viewer
 // @require      https://code.jquery.com/jquery-3.7.1.min.js
 // @namespace    http://tampermonkey.net/
-// @version      2025-08-08
+// @version      2026-08-08
 // @description  skip the hassle
 // @author       porn-lover
 // @match        *://*.fastpic.org/view/*
@@ -10,42 +10,79 @@
 // @match        *://*.imagebam.com/view/*
 // @match        *://*.pixhost.to/show/*
 // @match        *://*.postimg.cc/*
+// @grant        GM_cookie
 // ==/UserScript==
 
 (function() {
     'use strict';
 
-    var urls = {
-        'fastpic.org': {element: 'a.btn-outline-secondary', attr: 'src', url_regex: {from:['&dl=1'], to:['']}},
-        'imagebam.com': {element: 'img.main-image', attr: 'src', continue: {element: '[data-shown="inter"]', action: "var date = new Date();date.setTime(date.getTime() + (6 * 60 * 60 * 1000));var expires = \"; expires=\" + date.toUTCString();document.cookie = \"nsfw_inter=1\" + expires + \"; path=/\";window.location.reload();"}},
-        'imgbox.com': {element: 'img#img', attr: 'src'},
-        'pixhost.to': {element: 'img#image', attr: 'src'},
-        'postimg.cc': {element: 'img#main-image', attr: 'src'},
+    const urls = {
+        'fastpic.org': { 
+            element: 'a.btn-outline-secondary', 
+            attr: 'href', 
+            replace: [/&dl=1/g, ''] 
+        },
+        'imagebam.com': { 
+            element: 'img.main-image', 
+            attr: 'src', 
+            continue: {
+                element: '[data-shown="inter"]', 
+                action: () => {
+                    GM_cookie('set', {
+                        url: window.location.href,
+                        name: 'nsfw_inter',
+                        value: '1',
+                        expirationDate: Math.floor(Date.now() / 1000) + (6 * 60 * 60)
+                    }, (error) => {
+                        if (!error) {
+                            window.location.reload();
+                        } else {
+                            console.error('Cookie zetten mislukt via GM_cookie:', error);
+                        }
+                    });
+                }
+            }
+        },
+        'imgbox.com':  { element: 'img#img', attr: 'src' },
+        'pixhost.to':  { element: 'img#image', attr: 'src' },
+        'postimg.cc':  { element: 'img#main-image', attr: 'src' },
     };
 
-    const intervalTime = 50; // 50 milliseconden
-    const stopTime = 5000;    // 5 seconden
-    const obj = urls[window.location.hostname.replace(/^www\./, '')];
-    if (obj === undefined) {
-        return;
-    }
-    
-    const myInterval = setInterval(() => {
-        if($(obj.element).length) {
-            let newLocation = $(obj.element).attr(obj.attr);
-            if(obj.url_regex) {
-                newLocation = newLocation.replace(obj.url_regex.from[0], obj.url_regex.to[0]);
-            }
-            window.location = newLocation;
-        }
-        
-        if(obj.continue !== undefined && $(obj.continue.element).length) {
-            eval(obj.continue.action);
-        }
-    }, intervalTime);
+    const host = window.location.hostname.replace(/^www\./, '');
+    const obj = urls[host];
+    if (!obj) return;
 
-    setTimeout(() => {
-        clearInterval(myInterval);
-    }, stopTime);
-    
+    const checkAndRedirect = () => {
+        const $elem = $(obj.element);
+        if ($elem.length) {
+            let newLocation = $elem.attr(obj.attr);
+            if (newLocation) {
+                if (obj.replace) {
+                    newLocation = newLocation.replace(obj.replace[0], obj.replace[1]);
+                }
+                window.location.href = newLocation;
+                return true;
+            }
+        }
+
+        if (obj.continue && $(obj.continue.element).length) {
+            obj.continue.action();
+            return true;
+        }
+        return false;
+    };
+
+    // Voer direct een check uit zodra DOM klaar is
+    if (!checkAndRedirect()) {
+        // Indien het element nog niet geladen is, luister dynamisch naar DOM-wijzigingen
+        const observer = new MutationObserver((_, obs) => {
+            if (checkAndRedirect()) {
+                obs.disconnect();
+            }
+        });
+        observer.observe(document.documentElement, { childList: true, subtree: true });
+        
+        // Safety timeout om te stoppen met kijken na 5 seconden
+        setTimeout(() => observer.disconnect(), 5000);
+    }
 })();
