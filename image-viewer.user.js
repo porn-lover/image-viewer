@@ -2,7 +2,7 @@
 // @name         Image viewer
 // @require      https://code.jquery.com/jquery-3.7.1.min.js
 // @namespace    http://tampermonkey.net/
-// @version      2026.08.08.2
+// @version      2026.09.13
 // @description  skip the hassle
 // @author       porn-lover
 // @match        *://*.fastpic.org/view/*
@@ -11,6 +11,7 @@
 // @match        *://*.pixhost.to/show/*
 // @match        *://*.pixhost.cc/show/*
 // @match        *://*.postimg.cc/*
+// @match        *://*.turboimagehost.com/p/*
 // @grant        GM_cookie
 // @updateURL    https://raw.githubusercontent.com/porn-lover/image-viewer/main/image-viewer.user.js
 // @downloadURL  https://raw.githubusercontent.com/porn-lover/image-viewer/main/image-viewer.user.js
@@ -57,6 +58,7 @@
         'pixhost.to':  pixhost,
         'pixhost.cc':  pixhost,
         'postimg.cc':  { element: 'img#main-image', attr: 'src' },
+        'turboimagehost.com':  { element: 'img#imageid', attr: 'src' },    
     };
 
     const host = window.location.hostname.replace(/^www\./, '');
