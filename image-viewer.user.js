@@ -2,10 +2,11 @@
 // @name         Image viewer
 // @require      https://code.jquery.com/jquery-3.7.1.min.js
 // @namespace    http://tampermonkey.net/
-// @version      2026.09.13
+// @version      2026.09.22
 // @description  skip the hassle
 // @author       porn-lover
 // @match        *://*.fastpic.org/view/*
+// @match        *://*.fastpic.org/fullview/*
 // @match        *://*.imgbox.com/*
 // @match        *://*.imagebam.com/view/*
 // @match        *://*.pixhost.to/show/*
@@ -29,7 +30,7 @@
         };
     const urls = {
         'fastpic.org': { 
-            element: 'a.btn-outline-secondary', 
+            element: ['a.btn-outline-secondary', '#imglink', '#imga'], 
             attr: 'href', 
             replace: [/&dl=1/g, ''] 
         },
@@ -65,8 +66,7 @@
     const obj = urls[host];
     if (!obj) return;
 
-    const checkAndRedirect = () => {
-        const $elem = $(obj.element);
+    const checkElement = ($elem) => {
         if ($elem.length) {
             let newLocation = $elem.attr(obj.attr);
             if (newLocation) {
@@ -86,6 +86,11 @@
             }
         }
         return false;
+    }
+    
+    const checkAndRedirect = () => {
+        const elements = Array.isArray(obj.element) ? obj.element : [obj.element];
+        elements.forEach((item) => checkElement($(item)));
     };
 
     // Voer direct een check uit zodra DOM klaar is
